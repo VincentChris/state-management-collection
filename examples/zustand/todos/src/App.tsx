@@ -1,33 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Input } from '@douyinfe/semi-ui'
 import './App.css'
+import Filter from './Filter'
+import Filtered from './Filtered'
+import { useState } from 'react'
+import { useStore } from './store'
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [text, setText] = useState('')
+  const { setTodos } = useStore()
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Filter />
+      <Input
+        placeholder="Type ..."
+        value={text}
+        onChange={setText}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            if (text.trim() === '' || text.trim() === undefined) return
+            e.preventDefault()
+            setTodos((prevTodos) => [
+              {
+                id: `${window.crypto.randomUUID()}`,
+                title: text,
+                completed: false,
+              },
+              ...prevTodos,
+            ])
+            setText('')
+            console.log('Add new todo:', text)
+            // Add new todo here
+          }
+        }}
+      />
+      <Filtered />
     </>
   )
 }
